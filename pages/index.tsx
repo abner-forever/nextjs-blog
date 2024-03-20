@@ -26,19 +26,19 @@ export default function Home({ articleList }: any) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
-        <Link href="/about" className="blue1 text-3xl font-bold underline">关于我</Link>
-        <p className="fixed bottom-20 left-0 flex h-24 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none" >
-          test
-        </p>
-        {articleList.list.map((item: any) => {
-          return (
-            <div key={item.id}>
-              <span>{item.title}</span>
-              <span>{dayjs(item.updateTime).format("YYYY-MM-DD HH:MM")}</span>
-              <Link href={`/article/${item.id}`}>去查看</Link>
-            </div>
-          );
-        })}
+        <div className="flex flex-col w-10/12 mt-10">
+          {articleList.list.map((item: any) => {
+            return (
+              <Link href={`/article/${item.id}`} className="mh-20 bg-white rounded-lg mb-3 p-8 flex-col flex" key={item.id}>
+                <span className="text-lg font-medium">{item.title}</span>
+                <span>{dayjs(item.updateTime).format("YYYY-MM-DD HH:MM")}</span>
+              </Link>
+            );
+          })}
+        </div>
+        <Link href="/about" className="fixed bottom-8 text-xl">
+          关于我
+        </Link>
       </main>
     </>
   );

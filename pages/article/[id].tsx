@@ -26,10 +26,10 @@ export async function getServerSideProps(context: any) {
 const Article = ({articleInfo}: AboutProps) => {
   return (
     <Layout title={String(articleInfo?.title)}>
-      <div className="flex justify-between p-3 bg-white rounded-md mb-2"> <p>{articleInfo?.title}</p>
+      <div className="h-16 flex justify-between p-3 bg-white rounded-md mb-2"> <p>{articleInfo?.title}</p>
       <Link href="/">返回首页</Link></div>
       <div
-        className=" bg-white rounded-md p-3 overflow-hidden"
+        className=" bg-white rounded-md p-3 overflow-hidden min-h-screen"
         dangerouslySetInnerHTML={{ __html: articleInfo?.content || "null" }}
       />
     </Layout>
