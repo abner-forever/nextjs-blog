@@ -32,10 +32,10 @@ jobs:
           # scp参数
           ARGS: "-avzr --delete"
           # 源目录
-          SOURCE: ".next"
+          SOURCE: "next-blog"
           # 服务器ip：换成你的服务器IP
           REMOTE_HOST: ${{ secrets.SERVER_IP }}
           # 用户
           REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
           # 目标地址
-          TARGET: "/www/site/next-blog"
+          TARGET: "/www/site"
