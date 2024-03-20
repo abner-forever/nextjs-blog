@@ -1,7 +1,8 @@
 import Link from "next/link";
 import React from "react";
 import Layout from "@/components/Layout";
-import api from "@/pages/api/article/[id]";
+
+const HOST = process.env.HOME_PAGE || "http://localhost:3000"
 
 interface AboutProps {
   articleInfo: any;
@@ -11,9 +12,8 @@ export async function getServerSideProps(context: any) {
   const { params } = context;
  
   const { id } = params;
-
   // 调用 API 路由来获取数据
-  const res = await fetch(`http://localhost:3000/api/article/${id}`);
+  const res = await fetch(`${HOST}/api/article/${id}`);
   const { data } = await res.json();
   return {
       props: {
