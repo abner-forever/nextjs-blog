@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { getArticleList } from "./api/article";
+import { getArticleList } from "./api/article/[id]";
 
 const inter = Inter({ subsets: ["latin"] });
 
