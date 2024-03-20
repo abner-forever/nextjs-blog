@@ -13,6 +13,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18" # 指定node版本
+
       - name: Install dependencies
         run: npm install
 
@@ -21,9 +26,16 @@ jobs:
 
       - name: Deploy to server
         uses: easingthemes/ssh-deploy@v2
-        with:
-          server: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: ".next"
-          remote_path: "/www/site/next-blog"
+        env:
+          # 私钥 这里是阿里云的私钥 使用本地的私钥
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # scp参数
+          ARGS: "-avzr --delete"
+          # 源目录
+          SOURCE: ".next"
+          # 服务器ip：换成你的服务器IP
+          REMOTE_HOST: ${{ secrets.SERVER_IP }}
+          # 用户
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+          # 目标地址
+          TARGET: "/www/site/next-blog"
