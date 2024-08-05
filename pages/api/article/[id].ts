@@ -3,12 +3,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 const HOST = "http://foreverheart.top";
 
 export async function getArticleList() {
-  const result = await (await fetch(`${HOST}/api/article/articleList`)).json();
+  const result = await (await fetch(`${HOST}/api/articles`)).json();
   return result.data;
 }
 
 export async function getArticleDetail(id: string) {
-  const result = await (await fetch(`${HOST}/api/article/getArticle?id=${id}`)).json();
+  const result = await (await fetch(`${HOST}/api/articles/detail/${id}`)).json();
   return result;
 }
 export default function handler(req:NextApiRequest, res: NextApiResponse) {

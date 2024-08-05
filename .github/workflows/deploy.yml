@@ -1,9 +1,9 @@
-name: Deploy to Server
+name: Deploy to Docker Container
 
 on:
   push:
     branches:
-      - main
+      - main  # 触发分支
 
 jobs:
   deploy:
@@ -13,29 +13,32 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: "18" # 指定node版本
+      - name: Read package.json version
+        id: package
+        run: echo "::set-output name=version::$(node -e 'console.log(require("./package.json").version)')"
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build project
-        run: npm run build
-
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@v2
+      - name: Build and push Docker image
+        run: |
+          export PKM_VERSION_DEFAULT=$(node -pe "require('./package.json').version")
+          export SEMANTIC_VERSION=`npm run semantic-release --dry-run --registry=https://registry.npmmirror.com | grep -oP 'Published release \K.*? ' | sed s/[[:space:]]//g`
+          docker build -t nextjs-blog .
+          IMAGE_TAG=$SEMANTIC_VERSION
+          docker tag nextjs-blog:latest abnery/nextjs-blog:$IMAGE_TAG
+          docker tag nextjs-blog:latest abnery/nextjs-blog:latest
+          docker push abnery/nextjs-blog:$IMAGE_TAG
+          docker push abnery/nextjs-blog:latest
         env:
-          # 私钥 这里是阿里云的私钥 使用本地的私钥
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          # scp参数
-          ARGS: "-avzr --delete"
-          # 源目录
-          SOURCE: "next-blog"
-          # 服务器ip：换成你的服务器IP
-          REMOTE_HOST: ${{ secrets.SERVER_IP }}
-          # 用户
-          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-          # 目标地址
-          TARGET: "/www/site"
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: SSH into server and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull abnery/nextjs-blog:$IMAGE_TAG
+            docker stop nextjs-blog || true
+            docker rm nextjs-blog || true
+            docker run -d --name nextjs-blog -p 3000:3000 abnery/nextjs-blog:$IMAGE_TAG
