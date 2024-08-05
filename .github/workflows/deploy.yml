@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Read package.json version
         id: package
@@ -23,9 +23,7 @@ jobs:
           export SEMANTIC_VERSION=`npm run semantic-release --dry-run --registry=https://registry.npmmirror.com | grep -oP 'Published release \K.*? ' | sed s/[[:space:]]//g`
           docker build -t nextjs-blog .
           IMAGE_TAG=$SEMANTIC_VERSION
-          docker tag nextjs-blog:latest abnery/nextjs-blog:$IMAGE_TAG
           docker tag nextjs-blog:latest abnery/nextjs-blog:latest
-          docker push abnery/nextjs-blog:$IMAGE_TAG
           docker push abnery/nextjs-blog:latest
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
