@@ -1,36 +1,40 @@
 import Link from "next/link";
 import React from "react";
 import Layout from "@/components/Layout";
+import { getArticleDetail } from "../api/article/[id]";
+import { remark } from "remark";
+import html from "remark-html";
 
-const HOST = process.env.HOME_PAGE || "http://localhost:3000"
-
-interface AboutProps {
-  articleInfo: any;
+interface ArticleProps {
+  title: any;
+  content: string;
 }
 
 export async function getServerSideProps(context: any) {
   const { params } = context;
- 
+
   const { id } = params;
-  // 调用 API 路由来获取数据
-  const res = await fetch(`${HOST}/api/article/${id}`);
-  const { data } = await res.json();
+  const { data } = await getArticleDetail(id);
+  const processedContent = await remark().use(html).process(data.content);
+  const contentHtml = processedContent.toString();
   return {
-      props: {
-        articleInfo: data,
-      },
+    props: {
+      title: data.title,
+      content: contentHtml,
+    },
   };
 }
 
-
-const Article = ({articleInfo}: AboutProps) => {
+const Article = ({ title, content }: ArticleProps) => {
   return (
-    <Layout title={String(articleInfo?.title)}>
-      <div className="h-16 flex justify-between p-3 bg-white rounded-md mb-2"> <p>{articleInfo?.title}</p>
-      <Link href="/">返回首页</Link></div>
+    <Layout title={String(title)}>
+      <div className="h-16 flex justify-between p-3 bg-white rounded-md mb-2">
+        <p>{title}</p>
+        <Link href="/">返回首页</Link>
+      </div>
       <div
         className=" bg-white rounded-md p-3 overflow-hidden min-h-screen"
-        dangerouslySetInnerHTML={{ __html: articleInfo?.content || "null" }}
+        dangerouslySetInnerHTML={{ __html: content || "null" }}
       />
     </Layout>
   );

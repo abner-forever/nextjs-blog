@@ -1,10 +1,11 @@
+import Layout from '@/components/Layout'
 import React from 'react'
 
 const About = () => {
   return (
-    <div>
-      about me
-    </div>
+    <Layout title='关于我'>
+      关于我
+    </Layout>
   )
 }
 
